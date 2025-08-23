@@ -2,18 +2,33 @@ package main
 
 import (
 	"context"
+	menuServer "cookdie/menu/server"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"cookdie/restaurants"
+	// "cookdie/restaurants"
 	// "cookdie/vendors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/zap"
 )
 
 // var env = os.Getenv("ENV")
+
+func SetupLogger() *zap.SugaredLogger {
+	zapLogger, err := zap.NewProduction()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating zap logger: %v\n", err)
+		os.Exit(1)
+	}
+	defer zapLogger.Sync()
+
+	return zapLogger.Sugar()
+
+}
 
 func initGinServer() {
 	r := gin.Default()
@@ -31,6 +46,7 @@ func initGinServer() {
 
 		c.Next()
 	})
+
 	dbpool, derr := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 
 	if derr != nil {
@@ -38,10 +54,12 @@ func initGinServer() {
 		os.Exit(1)
 	}
 
-	group := r.Group("/api/v1")
+	logger := SetupLogger()
+	menuLogger := logger.Named("menu-service")
 
-	restaurantRouteHandler := restaurants.NewRouteHandler()
-	restaurantService.RegisterApiRoutes(group)
+	menuServer.StartMenuServer(menuLogger, dbpool, r)
+	// restaurantRouteHandler := restauants.NewRouteHandler()
+	// restaurantService.RegisterApiRoutes(group)
 	r.Run(":3000")
 
 }

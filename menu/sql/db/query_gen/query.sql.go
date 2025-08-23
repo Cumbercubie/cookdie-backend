@@ -10,32 +10,33 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lib/pq"
 )
 
-const createMenu = `-- name: CreateMenu :one
+const createDish = `-- name: CreateDish :one
 INSERT INTO dish (
-  restaurant_id, name, images, rating, created_by, created_at, updated_at
+  id, restaurant_id, name, images, rating, created_by, created_at, updated_at
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING id, restaurant_id, name, images, rating, created_by, updated_at, created_at
 `
 
-type CreateMenuParams struct {
+type CreateDishParams struct {
+	ID           uuid.UUID
 	RestaurantID uuid.UUID
 	Name         string
 	Images       []string
 	Rating       *float64
 	CreatedBy    uuid.UUID
 	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	UpdatedAt    *time.Time
 }
 
-func (q *Queries) CreateMenu(ctx context.Context, arg CreateMenuParams) (Dish, error) {
-	row := q.db.QueryRowContext(ctx, createMenu,
+func (q *Queries) CreateDish(ctx context.Context, arg CreateDishParams) (Dish, error) {
+	row := q.db.QueryRow(ctx, createDish,
+		arg.ID,
 		arg.RestaurantID,
 		arg.Name,
-		pq.Array(arg.Images),
+		arg.Images,
 		arg.Rating,
 		arg.CreatedBy,
 		arg.CreatedAt,
@@ -46,7 +47,29 @@ func (q *Queries) CreateMenu(ctx context.Context, arg CreateMenuParams) (Dish, e
 		&i.ID,
 		&i.RestaurantID,
 		&i.Name,
-		pq.Array(&i.Images),
+		&i.Images,
+		&i.Rating,
+		&i.CreatedBy,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getDishById = `-- name: GetDishById :one
+SELECT id, restaurant_id, name, images, rating, created_by, updated_at, created_at
+FROM dish
+WHERE id = $1
+`
+
+func (q *Queries) GetDishById(ctx context.Context, id uuid.UUID) (Dish, error) {
+	row := q.db.QueryRow(ctx, getDishById, id)
+	var i Dish
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.Name,
+		&i.Images,
 		&i.Rating,
 		&i.CreatedBy,
 		&i.UpdatedAt,

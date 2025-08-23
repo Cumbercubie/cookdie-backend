@@ -17,6 +17,6 @@ type Dish struct {
 	Images       []string
 	Rating       *float64
 	CreatedBy    uuid.UUID
-	UpdatedAt    time.Time
+	UpdatedAt    *time.Time
 	CreatedAt    time.Time
 }

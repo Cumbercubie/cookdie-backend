@@ -5,6 +5,8 @@ import (
 	"time"
 
 	sql "cookdie/menu/sql/db/query_gen"
+
+	"github.com/google/uuid"
 )
 
 type dishStore interface {
@@ -12,9 +14,28 @@ type dishStore interface {
 }
 
 type MenuService struct {
-	queries sql.Queries
+	store sql.Queries
 }
 
+type MenuServiceConfig struct {
+	Store sql.Queries
+}
+
+func NewMenuService(cfg *MenuServiceConfig) *MenuService {
+	return &MenuService{
+		store: cfg.Store,
+	}
+}
+
+func (s *MenuService) GetDishById(dishId uuid.UUID) (*sql.Dish, error) {
+	dish, err := s.store.GetDishById(context.Background(), dishId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dish, nil
+}
 func (s *MenuService) CreateDish(input *Dish) (*sql.Dish, error) {
 	err := validateDishInput(input)
 
@@ -23,17 +44,19 @@ func (s *MenuService) CreateDish(input *Dish) (*sql.Dish, error) {
 		return nil, err
 	}
 
-	dishParams := sql.CreateMenuParams{
+	t := time.Now()
+
+	dishParams := sql.CreateDishParams{
 		RestaurantID: *input.RestaurantId,
 		Name:         input.Name,
 		Images:       input.Images,
 		Rating:       &input.Rating,
 		CreatedBy:    *input.CreatedBy,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		CreatedAt:    t,
+		UpdatedAt:    &t,
 	}
 
-	newDish, err := s.queries.CreateMenu(context.Background(), dishParams)
+	newDish, err := s.store.CreateDish(context.Background(), dishParams)
 
 	if err != nil {
 		return nil, err

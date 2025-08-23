@@ -7,7 +7,7 @@ CREATE TABLE dish (
   images TEXT[] DEFAULT '{}',
   rating DOUBLE,
   created_by UUID NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
