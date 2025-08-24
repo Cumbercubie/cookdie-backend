@@ -21,8 +21,13 @@ type MenuService interface {
 func (rh *routeHandler) registerMenuRoutes(r *gin.Engine) {
 	apiV1 := r.Group("/v1")
 
+	apiV1.GET("/api/restaurants/menu/health", rh.HealthCheck)
 	apiV1.GET("/api/restaurants/menu/dishes", rh.GetDishById)
 	apiV1.POST("/api/restaurants/menu/dishes", rh.CreateDish)
+}
+
+func (rh *routeHandler) HealthCheck(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "/api/restaurants/menu endpoint health check ok"})
 }
 
 func (rh *routeHandler) CreateDish(c *gin.Context) {

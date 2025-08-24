@@ -2,7 +2,7 @@ package server
 
 import (
 	"cookdie/menu"
-	"cookdie/menu/http"
+	menuHttp "cookdie/menu/http"
 	sql "cookdie/menu/sql/db/query_gen"
 
 	"github.com/gin-gonic/gin"
@@ -23,8 +23,8 @@ type App struct {
 func (a *App) RegisterApiRoutes(r *gin.Engine) error {
 	logger.Info("Registering Api Routes for catalog app...")
 
-	routeHandler := http.NewRouteHandler(
-		&http.RouteHandlerConfig{
+	routeHandler := menuHttp.NewRouteHandler(
+		&menuHttp.RouteHandlerConfig{
 			MenuService: a.menuService,
 		},
 	)
