@@ -1,14 +1,25 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto"; -- for gen_random_uuid()
 
 CREATE TABLE dish (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID PRIMARY KEY,
   restaurant_id UUID NOT NULL,
   name TEXT NOT NULL,
   images TEXT[] DEFAULT '{}',
   rating DOUBLE,
+  tags TEXT[],
+  category_id UUID,
   created_by UUID NOT NULL,
   updated_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE menu_group (
+  id UUID PRIMARY KEY,
+  restaurant_id UUID NOT NULL,
+  name TEXT NOT NULL,
+  updated_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW() NOT NULL
+
 );
 
 

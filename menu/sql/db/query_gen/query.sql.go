@@ -14,10 +14,10 @@ import (
 
 const createDish = `-- name: CreateDish :one
 INSERT INTO dish (
-  id, restaurant_id, name, images, rating, created_by, created_at, updated_at
+  id, restaurant_id, name, images, rating, tags, category_id, created_by, created_at, updated_at
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING id, restaurant_id, name, images, rating, created_by, updated_at, created_at
+  $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+) RETURNING id, restaurant_id, name, images, rating, tags, category_id, created_by, updated_at, created_at
 `
 
 type CreateDishParams struct {
@@ -26,6 +26,8 @@ type CreateDishParams struct {
 	Name         string
 	Images       []string
 	Rating       *float64
+	Tags         []string
+	CategoryID   uuid.UUID
 	CreatedBy    uuid.UUID
 	CreatedAt    time.Time
 	UpdatedAt    *time.Time
@@ -38,6 +40,8 @@ func (q *Queries) CreateDish(ctx context.Context, arg CreateDishParams) (Dish, e
 		arg.Name,
 		arg.Images,
 		arg.Rating,
+		arg.Tags,
+		arg.CategoryID,
 		arg.CreatedBy,
 		arg.CreatedAt,
 		arg.UpdatedAt,
@@ -49,6 +53,8 @@ func (q *Queries) CreateDish(ctx context.Context, arg CreateDishParams) (Dish, e
 		&i.Name,
 		&i.Images,
 		&i.Rating,
+		&i.Tags,
+		&i.CategoryID,
 		&i.CreatedBy,
 		&i.UpdatedAt,
 		&i.CreatedAt,
@@ -57,7 +63,7 @@ func (q *Queries) CreateDish(ctx context.Context, arg CreateDishParams) (Dish, e
 }
 
 const getDishById = `-- name: GetDishById :one
-SELECT id, restaurant_id, name, images, rating, created_by, updated_at, created_at
+SELECT id, restaurant_id, name, images, rating, tags, category_id, created_by, updated_at, created_at
 FROM dish
 WHERE id = $1
 `
@@ -71,6 +77,8 @@ func (q *Queries) GetDishById(ctx context.Context, id uuid.UUID) (Dish, error) {
 		&i.Name,
 		&i.Images,
 		&i.Rating,
+		&i.Tags,
+		&i.CategoryID,
 		&i.CreatedBy,
 		&i.UpdatedAt,
 		&i.CreatedAt,

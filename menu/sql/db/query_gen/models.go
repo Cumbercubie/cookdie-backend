@@ -16,7 +16,17 @@ type Dish struct {
 	Name         string
 	Images       []string
 	Rating       *float64
+	Tags         []string
+	CategoryID   uuid.UUID
 	CreatedBy    uuid.UUID
+	UpdatedAt    *time.Time
+	CreatedAt    time.Time
+}
+
+type MenuGroup struct {
+	ID           uuid.UUID
+	RestaurantID uuid.UUID
+	Name         string
 	UpdatedAt    *time.Time
 	CreatedAt    time.Time
 }
