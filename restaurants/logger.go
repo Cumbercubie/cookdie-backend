@@ -1,4 +1,4 @@
-package menu
+package restaurants
 
 type Logger interface {
 	Debug(args ...interface{})

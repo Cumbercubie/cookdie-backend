@@ -47,7 +47,7 @@ func (rh *routeHandler) CreateDish(c *gin.Context) {
 }
 
 func (rh *routeHandler) GetDishById(c *gin.Context) {
-	dishId, err := uuid.Parse(c.Param("disId"))
+	dishId, err := uuid.Parse(c.Param("dishId"))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})

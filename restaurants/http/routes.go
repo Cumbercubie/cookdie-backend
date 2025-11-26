@@ -1,6 +1,10 @@
-package restaurants
+package http
 
-import "github.com/gin-gonic/gin"
+import (
+	"cookdie/restaurants"
+
+	"github.com/gin-gonic/gin"
+)
 
 type routeHandler struct {
 	RestaurantService RestaurantService
@@ -23,3 +27,5 @@ func (rh *routeHandler) RegisterRoutes(r *gin.Engine) {
 	rh.registerRestaurantRoutes(r)
 
 }
+
+var logger restaurants.Logger
