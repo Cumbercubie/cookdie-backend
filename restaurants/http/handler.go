@@ -17,6 +17,12 @@ type RestaurantService interface {
 //	type RecipeService interface {
 //		CreateRecipe(input *)
 //	}
+
+func (rh *routeHandler) registerRestaurantRoutes(r *gin.Engine) {
+	apiV1 := r.Group("/v1")
+
+	apiV1.POST("/api/restaurants", rh.CreateRestaurant)
+}
 func (rh *routeHandler) CreateRestaurant(c *gin.Context) {
 	var input *restaurants.Restaurant
 

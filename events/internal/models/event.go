@@ -1,14 +1,19 @@
-package models
+package events
 
 type EventType string
 
+const (
+	EventTypeReview  EventType = "review"
+	EventTypeCheckin EventType = "checkin"
+)
+
 type Event struct {
-	Type       EventType              `json:"type"`
-	EventId    string                 `json:"event_id"`
-	UserId     string                 `json:"user_id"`
-	BusinessId string                 `json:"business_id"`
-	Date       string                 `json:"date"`
-	Payload    map[string]interface{} `json:"payload"`
+	Type       EventType   `json:"type"`
+	EventId    string      `json:"event_id"`
+	UserId     string      `json:"user_id"`
+	BusinessId string      `json:"business_id"`
+	Date       string      `json:"date"`
+	Payload    interface{} `json:"payload"`
 }
 
 type Review struct {
@@ -24,5 +29,7 @@ type Review struct {
 }
 
 type Checkin struct {
-	
+	UserId     string `json:"user_id"`
+	BusinessId string `json:"business_id"`
+	Date       string `json:"date"`
 }

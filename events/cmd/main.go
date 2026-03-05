@@ -1,25 +1,18 @@
-package main
+package cmd
 
 import (
 	"context"
-	menuServer "cookdie/menu/server"
+	"cookdie/events/internal/server"
 
-	// restaurantServer "cookdie/restaurants/server"
-	eventServer "cookdie/events/internal/server"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	// "cookdie/restaurants"
-	// "cookdie/vendors"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
-
-// var env = os.Getenv("ENV")
 
 func SetupLogger() *zap.SugaredLogger {
 	zapLogger, err := zap.NewProduction()
@@ -59,10 +52,8 @@ func initGinServer() {
 	}
 
 	logger := SetupLogger()
-	menuLogger := logger.Named("menu-service")
 
-	menuServer.StartMenuServer(menuLogger, dbpool, r)
-	eventServer.StartEventServer(logger, dbpool, r)
+	server.StartEventServer(logger, dbpool, r)
 	// restaurantRouteHandler := restauants.NewRouteHandler()
 	// restaurantService.RegisterApiRoutes(group)
 	r.Run(":3000")
